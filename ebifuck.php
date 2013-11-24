@@ -7,7 +7,7 @@
 			private $buffer;
 			private $buffer_size;
 			private $memory;
-			private  $nest = 0;
+			private $nest = 0;
 
 			//	コンストラクタで定義すっか
 			function __construct()
@@ -22,9 +22,11 @@
 					//	ポインタが指す値をデクリメント
 					"ラ" => function($o) { $o->memory[$o->ptr] --; return null; },
 					//	ポインタが指す値を出力に書き出す
-					"イ" => function($o) { return $o->memory[$o->ptr]; },
+					"イ" => function($o) { return sprintf ( "%c", $o->memory[$o->ptr] ); },
+					//	エビフライはおいしい！
+					"神" => function($o) { return "エビフライおいしい！一番好きな食べ物です！！"; },
 					//	ポインタが指す値が0なら、対応する]の直後にジャンプする
-					'[' => function($o)
+					"皮" => function($o)
 					{
 						//	値は0だよな？
 						if ( !$o->memory[$o->ptr] )
@@ -33,12 +35,12 @@
 							{
 								//	プログラムカウンタを増加
 								$c = mb_substr($o->buffer, ++$o->pc, 1, "utf-8");
-								if ( $c === '[' )
+								if ( $c === "皮" )
 								{
 									$this->nest ++;
 									break;
 								}
-								if ( $c === ']' )
+								if ( $c === "衣" )
 								{
 									$this->nest --;
 									break;
@@ -48,18 +50,18 @@
 						return null;
 					},
 					//	ポインタが指す値が0でないなら、対応する[の直後にジャンプする
-					']' => function($o)
+					"衣" => function($o)
 					{
 						for ( ;; )
 						{
 							//	プログラムカウンタを減らす
 							$c = mb_substr($o->buffer, --$o->pc, 1, "utf-8");
-							if ( $c === '[' )
+							if ( $c === "皮" )
 							{
 								$this->nest --;
 								break;
 							}
-							if ( $c === ']' )
+							if ( $c === "衣" )
 							{
 								$this->nest ++;
 								break;
@@ -93,7 +95,7 @@
 					//	ついでに出力も拾う
 					if ( !is_null ( $w ) )
 					{
-						$result = sprintf ( "%s%c", $result, $w );
+						$result = sprintf ( "%s%s", $result, $w );
 					}
 				}
 				return $result;
@@ -102,5 +104,5 @@
 
 		//	ためし
 		$d = new Ebifuck ();
-		echo $d->exec ( "フフフフフフフフフ[エフフフフフフフフエフフフフフフフフフフフエフフフフフビビビラ]エイエフフイフフフフフフフイイフフフイエライ
-ラララララララララララライビフフフフフフフフイラララララララライフフフイラララララライラララララララライエフイ" );
+		echo $d->exec ( "フフフフフフフフフ皮エフフフフフフフフエフフフフフフフフフフフエフフフフフビビビラ衣エイエフフイフフフフフフフイイフフフイエライ
+ラララララララララララライビフフフフフフフフイラララララララライフフフイラララララライラララララララライエフイ神" );
